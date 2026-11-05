@@ -1,0 +1,142 @@
+├── lib/
+│   └── main.dart  
+└── test/
+    └── widget_test.dart 
+
+main.dart
+
+import 'package:flutter/material.dart';
+
+void main()
+{
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget
+{
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context)
+  {
+    return MaterialApp(
+      title: 'Flutter Demo',
+
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Flutter Demo Home Page'),
+        ),
+
+        body: Center(
+          child: CustomButton(
+            label: 'Designed Button',
+
+            onPressed: () {
+              // Handle button press here
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomButton extends StatelessWidget
+{
+  final String label;
+  final VoidCallback onPressed;
+
+  const CustomButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context)
+  {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 12,
+        ),
+
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+
+      onPressed: onPressed,
+
+      child: Text(label),
+    );
+  }
+}
+
+
+widget_test.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:task10/main.dart';
+
+void main()
+{
+  testWidgets(
+    'CustomButton displays correctly and responds to taps',
+
+    (WidgetTester tester) async
+    {
+      bool isPressed = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CustomButton(
+              label: 'Test Button',
+
+              onPressed: () {
+                isPressed = true;
+              },
+            ),
+          ),
+        ),
+      );
+
+      // Verify that the button is displayed.
+      expect(
+        find.text('Test Button'),
+        findsOneWidget,
+      );
+
+      // Tap the button.
+      await tester.tap(
+        find.text('Test Button'),
+      );
+
+      // Rebuild the widget after the tap.
+      await tester.pump();
+
+      // Verify that the button is still displayed.
+      expect(
+        find.text('Test Button'),
+        findsOneWidget,
+      );
+
+      // Verify that the onPressed callback was triggered.
+      expect(
+        isPressed,
+        isTrue,
+      );
+    },
+  );
+}
+
