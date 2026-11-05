@@ -1,0 +1,90 @@
+
+flutter pub add http
+
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+// This package helps Flutter send HTTP requests to the API.
+
+void main()
+{
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget
+{
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context)
+  {
+    return MaterialApp(
+      home: const UserPage(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class UserPage extends StatefulWidget
+{
+  const UserPage({super.key});
+
+  @override
+  State<UserPage> createState() => _UserPageState();
+}
+
+class _UserPageState extends State<UserPage>
+{
+  // Create an empty list to store data received from the API.
+  List users = [];
+
+  // Function to fetch users from the REST API.
+  Future<void> fetchUsers() async
+  {
+    final response = await http.get(
+      // Asks the server for data.
+      Uri.parse('https://jsonplaceholder.typicode.com/users'),
+    );
+
+    // Status code 200 means the request was successful.
+    if (response.statusCode == 200)
+    {
+      setState(() {
+        // Convert JSON into Dart data.
+        users = jsonDecode(response.body);
+      });
+    }
+  }
+
+  @override
+  void initState()
+  {
+    super.initState();
+
+    // Fetch users when the screen starts.
+    fetchUsers();
+  }
+
+  @override
+  Widget build(BuildContext context)
+  {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Users'),
+      ),
+
+      // Display multiple users using ListView.builder.
+      body: ListView.builder(
+        itemCount: users.length,
+        itemBuilder: (context, index)
+        {
+          return ListTile(
+            title: Text(users[index]['name']),
+            subtitle: Text(users[index]['email']),
+          );
+        },
+      ),
+    );
+  }
+}
